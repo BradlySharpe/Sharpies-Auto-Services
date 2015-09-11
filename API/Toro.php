@@ -19,6 +19,23 @@ class Toro
             }
         }
 
+        $regex = '/\\.[^.\\s]{3,4}$/';
+        $extension = array();
+        preg_match($regex, $path_info, $extension);
+
+        // Access using:
+        //      /route/path/id
+        //      /route/path/id.json
+        if (empty($extension) || (1 == count($extension) && '.json' == strtolower($extension[0])))
+            header('Content-Type: application/json');
+        else
+            die('Unsupported file extension');
+
+        // Remove extension if set
+        if (1 == count($extension))
+            $path_info = preg_replace($regex, '', $path_info);
+
+
         $discovered_handler = null;
         $regex_matches = array();
 
@@ -80,7 +97,8 @@ class Toro
 
     private static function is_xhr_request()
     {
-        return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+        // Don't make use of XHR methods
+        return false && isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
     }
 }
 
