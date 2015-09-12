@@ -1,7 +1,8 @@
 <?php
+
+  require('Helpers.php');
   require('DBase.php');
   require('Toro.php');
-  require('Helpers.php');
 
   // Require all files in Logic folder
   foreach (glob('Logic' . DIRECTORY_SEPARATOR . '*.php') as $file)
@@ -13,5 +14,7 @@
 
   Toro::serve(array(
     '/customer' => "Customer",
-    '/customer/:number' => "Customer"
+    '/customer/:number' => "Customer",
+    '/car' => "Car",
+    '/car/:number' => "Car"
   ));
