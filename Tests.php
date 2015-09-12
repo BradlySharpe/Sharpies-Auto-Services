@@ -208,6 +208,7 @@
   );
   $result = $API->post('service', $Service, "Creating Service");
   if ($result->error) failed("Didn't return service: " . $result->message . "\n" . json_encode($result->data));
+  $API->test((1000 <= $result->data->id), true, "Service ID should be greater than 999");
   foreach ($Service as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
   $Service['id'] = $result->data->id;
@@ -220,5 +221,26 @@
   foreach ($Service as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
 
+  /*
+    Create Invoice
+   */
+  $Invoice = array(
+    'service' => $Service['id']
+  );
+  $result = $API->post('invoice', $Invoice, "Creating Invoice");
+  if ($result->error) failed("Didn't return invoice: " . $result->message . "\n" . json_encode($result->data));
+  $API->test((1000 <= $result->data->id), true, "Invoice ID should be greater than 999");
+  foreach ($Invoice as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Invoice['id'] = $result->data->id;
 
-  echo "\nTests Finished!";
+  /*
+    Get Invoice
+   */
+  $result = $API->get('invoice/' . $Invoice['id'], "Getting Invoice - ID: " . $Invoice['id']);
+  if ($result->error) failed("Didn't return invoice: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Invoice as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+
+  echo "\nTests Finished!\n";
