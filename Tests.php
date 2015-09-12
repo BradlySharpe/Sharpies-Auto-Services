@@ -8,7 +8,7 @@
     die("  --    Test Failed: $message");
   }
 
-  class makeCall {
+  class API {
     private $ch;
     private $base = "http://localhost/Sharpies-Auto-Services/";
 
@@ -69,35 +69,112 @@
     }
   }
 
-  $curl = new makeCall();
+  $API = new API();
   echo "\nStarting Tests...\n";
 
-  $data = array(
-    'firstname' => 'Michelle',
+  $Warren = array(
+    'firstname' => 'Warren',
     'lastname' => 'Sharpe',
     'address' => '890 Fake Street',
     'city' => 'Dennington',
     'state' => 'Victoria',
-    'postcode' => 1235,
+    'postcode' => 3280,
   );
-  $result = $curl->post('customer', $data, "Testing New Customer");
-  if ($result->error) failed("Didn't return customer: " . $result->message);
-  foreach ($data as $key => $value) {
-    $curl->test($result->data->{$key}, $value, $key);
-  }
 
-  $result = $curl->get('customer/' . $result->data->id, "Testing Customer " . $result->data->id);
-  if ($result->error) failed("Didn't return customer: " . $result->message);
-  foreach ($data as $key => $value) {
-    $curl->test($result->data->{$key}, $value, $key);
-  }
+  $Bradly = array(
+    'firstname' => 'Bradly',
+    'lastname' => 'Sharpe',
+    'address' => '123 Fake Street',
+    'city' => 'Dennington',
+    'state' => 'Victoria',
+    'postcode' => 3280,
+  );
 
-  $data['firstname'] = 'Brooke';
-  $result = $curl->put('customer/' . $result->data->id, array('firstname' => $data['firstname']), "Testing Update Customer " . $result->data->id);
-  if ($result->error) failed("Didn't return customer: " . $result->message);
+  $Car = array(
+    'owner' => null,
+    'make' => 'Holden Commodore',
+    'model' => 'VE Wagon',
+    'registration' => '123XYZ'
+  );
 
-  foreach ($data as $key => $value) {
-    $curl->test($result->data->{$key}, $value, $key);
-  }
+  /*
+    Create Customer - Warren
+   */
+  $result = $API->post('customer', $Warren, "Creating Warren");
+  if ($result->error) failed("Didn't return customer: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Warren as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Warren['id'] = $result->data->id;
+
+  /*
+    Create Customer - Bradly
+   */
+  $result = $API->post('customer', $Bradly, "Creating Bradly");
+  if ($result->error) failed("Didn't return customer: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Bradly as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Bradly['id'] = $result->data->id;
+  logMessage("Bradly ID: " . $Bradly['id']);
+
+  /*
+    Get Customer - Warren
+   */
+  $result = $API->get('customer/' . $Warren['id'], "Getting Warren - ID: " . $Warren['id']);
+  if ($result->error) failed("Didn't return customer: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Warren as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Update Customer - Warren
+      Set City to Warrnambool
+   */
+  $Warren['city'] = 'Warrnambool';
+  $result = $API->put(
+    'customer/' . $Warren['id'],
+    array('city' => $Warren['city']),
+    "Updating Warren - City: " . $Warren['city']);
+  if ($result->error) failed("Didn't return customer: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Warren as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Create Car
+   */
+  $Car['owner'] = $Warren['id'];
+  $result = $API->post('car', $Car, "Creating Car");
+  if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Car as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Car['id'] = $result->data->id;
+
+  /*
+    Create Duplicate Car
+      Should fail
+   */
+  $result = $API->post('car', $Car, "Creating Duplicate Car");
+  if (!$result->error) failed("Should have returned error - Cannot create duplicate cars");
+  logMessage("  Couldn't create duplicate car - that's good!");
+
+  /*
+    Get Car
+   */
+  $result = $API->get('car/' . $Car['id'], "Getting Car - ID: " . $Car['id']);
+  if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Car as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Update Car
+      Change Owner
+   */
+  $Car['owner'] = $Bradly['id'];
+  $result = $API->put(
+    'car/' . $Car['id'],
+    array('owner' => $Car['owner']),
+    "Updating Car - Owner: " . $Car['owner']);
+  if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Car as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
 
   echo "\nTests Finished!";
