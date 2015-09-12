@@ -20,5 +20,7 @@
     '/safetycheck' => "SafetyCheck",
     '/safetycheck/:number' => "SafetyCheck",
     '/service' => "Service",
-    '/service/:number' => "Service"
+    '/service/:number' => "Service",
+    '/invoice' => "Invoice",
+    '/invoice/:number' => "Invoice"
   ));
