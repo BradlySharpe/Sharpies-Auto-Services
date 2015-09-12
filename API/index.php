@@ -38,7 +38,7 @@
             preg_match($options['regex'], $haystack[$key], $matches);
             if (0 >= count($matches)) {
               $valid = false;
-              $errors[] = array('field' => $key, 'reason' => 'regex');
+              $errors[] = array('field' => $key, 'reason' => 'regex', 'expression' => $options['regex']);
             }
           }
         }
@@ -53,7 +53,7 @@
     }
   }
 
-  class CustomerHandler {
+  class Customer {
     private $db;
     public function __construct() { $this->db = new DBase(); }
 
@@ -72,11 +72,11 @@
     public function post() {
       $result = RequiredFields::getFields(
         array(
-          'firstname' => array('required' => true),
-          'lastname' => array('required' => true),
-          'address' => array('required' => true),
-          'city' => array('required' => true),
-          'state' => array('required' => true),
+          'firstname' => array('required' => true, 'regex' => '/^.{1,30}$/'),
+          'lastname' => array('required' => true, 'regex' => '/^.{1,30}$/'),
+          'address' => array('required' => true, 'regex' => '/^.{1,100}$/'),
+          'city' => array('required' => true, 'regex' => '/^.{1,50}$/'),
+          'state' => array('required' => true, 'regex' => '/^.{1,20}$/'),
           'postcode' => array('required' => true, 'regex' => '/^\d{4}$/'),
         ),
         $_POST
@@ -85,8 +85,46 @@
       if ($result['error']) {
         new Error("Invalid values passed", $result['data']);
       } else {
-        new Respond($result);
+        $this->db->prepareInsert($result['data']);
+        if ($this->db->insert('customer')) {
+          $this->get($this->db->lastId());
+          //new Respond(array('id' => $this->db->lastId()));
+        } else {
+          new Error("Error inserting customer record");
+        }
       }
+    }
+
+    public function put($id = null) {
+      if (empty($id))
+        new Error("Customer ID cannot be empty");
+      $fields = array();
+      parse_str(file_get_contents("php://input"), $fields);
+
+      $result = RequiredFields::getFields(
+        array(
+          'firstname' => array('regex' => '/^.{1,30}$/'),
+          'lastname' => array('regex' => '/^.{1,30}$/'),
+          'address' => array('regex' => '/^.{1,100}$/'),
+          'city' => array('regex' => '/^.{1,50}$/'),
+          'state' => array('regex' => '/^.{1,20}$/'),
+          'postcode' => array('regex' => '/^\d{4}$/'),
+        ),
+        $fields
+      );
+
+      $fields = array();
+      foreach ($result['data'] as $key => $value)
+        if (!empty($value)) $fields[$key] = $value;
+
+      if (0 < count($fields)) {
+        $this->db->prepareUpdate($fields);
+        if ($this->db->update('customer', $id)) {
+          $this->get($id);
+        } else
+          new Error("Could not update customer");
+      } else
+          new Error("No values to update");
     }
   }
 
@@ -95,7 +133,7 @@
   });
 
   Toro::serve(array(
-    '/customer' => "CustomerHandler",
-    '/customer/:number' => "CustomerHandler"
+    '/customer' => "Customer",
+    '/customer/:number' => "Customer"
   ));
 ?>
