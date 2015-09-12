@@ -2,10 +2,11 @@
 
   class Customer {
     private $db;
+    private $tableName = 'customer';
     public function __construct() { $this->db = new DBase(); }
 
     public function get($id = null) {
-      $sql = "SELECT * FROM customer";
+      $sql = "SELECT * FROM {$this->tableName}";
       if (!empty($id))
         $sql .= " WHERE `id` = " . $this->db->escape($id);
       $result = array();
@@ -33,7 +34,7 @@
         new Error("Invalid values passed", $result['data']);
       } else {
         $this->db->prepareInsert($result['data']);
-        if ($this->db->insert('customer')) {
+        if ($this->db->insert($this->tableName)) {
           $this->get($this->db->lastId());
           //new Respond(array('id' => $this->db->lastId()));
         } else {
@@ -66,7 +67,7 @@
 
       if (0 < count($fields)) {
         $this->db->prepareUpdate($fields);
-        if ($this->db->update('customer', $id)) {
+        if ($this->db->update($this->tableName, $id)) {
           $this->get($id);
         } else
           new Error("Could not update customer");
