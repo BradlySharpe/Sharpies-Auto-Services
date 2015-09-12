@@ -94,7 +94,7 @@
     'owner' => null,
     'make' => 'Holden Commodore',
     'model' => 'VE Wagon',
-    'registration' => '123XYZ'
+    'registration' => (rand(100, 999) . 'XYZ')
   );
 
   /*
@@ -172,9 +172,28 @@
     'car/' . $Car['id'],
     array('owner' => $Car['owner']),
     "Updating Car - Owner: " . $Car['owner']);
-  if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
+  if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
   foreach ($Car as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
 
+  /*
+    Create Safety Check
+   */
+  $result = $API->post('safetycheck', array(), "Creating Safety Check");
+  if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
+  $SafetyCheck = $result->data;
+  $API->test(!empty($SafetyCheck->id), true, "ID Shouldn't be empty");
+
+  /*
+    Update Safety Check
+      Completed
+   */
+  $SafetyCheck->completed = 1;
+  $result = $API->put(
+    'safetycheck/' . $SafetyCheck->id,
+    array('completed' => $SafetyCheck->completed),
+    "Completing Safety Check");
+  if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
+  $API->test($result->data->completed, true, "Safety Check completed");
 
   echo "\nTests Finished!";
