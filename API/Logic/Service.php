@@ -40,6 +40,8 @@
       }
     }
 
+    /*
+      //Cannot change service once created
     public function put($id = null) {
       if (empty($id))
         new Error("Car ID cannot be empty");
@@ -69,4 +71,5 @@
       } else
           new Error("No values to update");
     }
+    */
   }
