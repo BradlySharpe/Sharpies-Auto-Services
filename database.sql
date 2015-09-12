@@ -39,6 +39,8 @@ CREATE TABLE safetyCheck (
   completed BOOLEAN NULL DEFAULT FALSE,
   created TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
+--    Set ID to 1000
+ALTER TABLE safetyCheck AUTO_INCREMENT=1000;
 
 --  Create Service table
 CREATE TABLE service (
@@ -49,6 +51,8 @@ CREATE TABLE service (
   safetyCheck INT NOT NULL,
   created TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
+--    Set ID to 1000
+ALTER TABLE service AUTO_INCREMENT=1000;
 
 --    Add Safety Check Foreign Keys
 ALTER TABLE `service`
@@ -71,6 +75,8 @@ CREATE TABLE invoice (
   service INT NOT NULL,
   created TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
+--    Set ID to 1000
+ALTER TABLE invoice AUTO_INCREMENT=1000;
 
 --    Add Service Foreign Key
 ALTER TABLE `invoice`
