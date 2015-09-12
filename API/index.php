@@ -18,5 +18,7 @@
     '/car' => "Car",
     '/car/:number' => "Car",
     '/safetycheck' => "SafetyCheck",
-    '/safetycheck/:number' => "SafetyCheck"
+    '/safetycheck/:number' => "SafetyCheck",
+    '/service' => "Service",
+    '/service/:number' => "Service"
   ));
