@@ -139,7 +139,8 @@ class Dbase {
 	}
 
 	private function error($message) {
-		die("\nDatabase Error: \n\t$message\n");
+		new Error("\nDatabase Error: \n\t$message\n");
+		die();
 	}
 
 }
