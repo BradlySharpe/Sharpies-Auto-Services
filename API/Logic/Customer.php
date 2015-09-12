@@ -63,7 +63,7 @@
 
       $fields = array();
       foreach ($result['data'] as $key => $value)
-        if (!empty($value)) $fields[$key] = $value;
+        if (!empty($key) && !empty($value)) $fields[$key] = $value;
 
       if (0 < count($fields)) {
         $this->db->prepareUpdate($fields);
