@@ -113,11 +113,3 @@ CREATE TABLE payment (
   comment TEXT NULL,
   date DATE NOT NULL
 );
-
-
---  Populate with example customer
-INSERT INTO customer
-  (`firstname`, `lastname`, `address`, `city`, `state`, `postcode`)
-VALUES
-  ('Bradly', 'Sharpe', '123 Fake Address', 'Warrnambool', 'Victoria', 3280),
-  ('Warren', 'Sharpe', '456 Fake Address', 'Warrnambool', 'Victoria', 3280);
