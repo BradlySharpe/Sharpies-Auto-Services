@@ -243,4 +243,9 @@
     $API->test($result->data->{$key}, $value, $key);
 
 
+  /*
+    Need to write Item tests
+   */
+  failed("Need to write Item tests");
+
   echo "\nTests Finished!\n";
