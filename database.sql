@@ -33,9 +33,10 @@ ALTER TABLE `car`
     FOREIGN KEY (owner)
       REFERENCES customer(id);
 
---  Create Saftey Check table
-CREATE TABLE safteyCheck (
+--  Create Safety Check table
+CREATE TABLE safetyCheck (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  completed BOOLEAN NULL DEFAULT FALSE,
   created TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -44,20 +45,20 @@ CREATE TABLE service (
   id INT AUTO_INCREMENT PRIMARY KEY,
   car INT NOT NULL,
   odo INT(6) NOT NULL,
-  safteyCheck INT NOT NULL,
+  safetyCheck INT NOT NULL,
   created TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
 );
 
---    Add Saftey Check Foreign Keys
+--    Add Safety Check Foreign Keys
 ALTER TABLE `service`
   ADD INDEX `car` (`car`),
-  ADD INDEX `safteyCheck` (`safteyCheck`),
+  ADD INDEX `safetyCheck` (`safetyCheck`),
   ADD CONSTRAINT fk_service_carId
     FOREIGN KEY (car)
       REFERENCES car(id),
-  ADD CONSTRAINT fk_service_safteyCheckId
-    FOREIGN KEY (safteyCheck)
-      REFERENCES safteyCheck(id);
+  ADD CONSTRAINT fk_service_safetyCheckId
+    FOREIGN KEY (safetyCheck)
+      REFERENCES safetyCheck(id);
 
 --  Create Invoice table
 CREATE TABLE invoice (
