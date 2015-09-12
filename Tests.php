@@ -196,4 +196,29 @@
   if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
   $API->test($result->data->completed, true, "Safety Check completed");
 
+
+  /*
+    Create Service
+   */
+  $Service = array(
+    'owner' => $Bradly['id'],
+    'car' => $Car['id'],
+    'odo' => rand(1, 999999),
+    'safetyCheck' => $SafetyCheck->id
+  );
+  $result = $API->post('service', $Service, "Creating Service");
+  if ($result->error) failed("Didn't return service: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Service as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Service['id'] = $result->data->id;
+
+  /*
+    Get Service
+   */
+  $result = $API->get('service/' . $Service['id'], "Getting Service - ID: " . $Service['id']);
+  if ($result->error) failed("Didn't return service: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Service as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+
   echo "\nTests Finished!";
