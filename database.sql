@@ -43,6 +43,7 @@ CREATE TABLE safetyCheck (
 --  Create Service table
 CREATE TABLE service (
   id INT AUTO_INCREMENT PRIMARY KEY,
+  owner INT NOT NULL,
   car INT NOT NULL,
   odo INT(6) NOT NULL,
   safetyCheck INT NOT NULL,
@@ -51,8 +52,12 @@ CREATE TABLE service (
 
 --    Add Safety Check Foreign Keys
 ALTER TABLE `service`
+  ADD INDEX `owner` (`owner`),
   ADD INDEX `car` (`car`),
   ADD INDEX `safetyCheck` (`safetyCheck`),
+  ADD CONSTRAINT fk_service_ownerId
+    FOREIGN KEY (owner)
+      REFERENCES Customer(id),
   ADD CONSTRAINT fk_service_carId
     FOREIGN KEY (car)
       REFERENCES car(id),
