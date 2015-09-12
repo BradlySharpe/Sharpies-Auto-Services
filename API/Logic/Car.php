@@ -42,7 +42,7 @@
 
     public function put($id = null) {
       if (empty($id))
-        new Error("Customer ID cannot be empty");
+        new Error("Car ID cannot be empty");
       $fields = array();
       parse_str(file_get_contents("php://input"), $fields);
 
@@ -58,7 +58,7 @@
 
       $fields = array();
       foreach ($result['data'] as $key => $value)
-        if (!empty($value)) $fields[$key] = $value;
+        if (!empty($key) && !empty($value)) $fields[$key] = $value;
 
       if (0 < count($fields)) {
         $this->db->prepareUpdate($fields);
