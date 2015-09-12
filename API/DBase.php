@@ -14,7 +14,7 @@ class Dbase {
 	public $_insert_values = [];
 	public $_update_sets = [];
 
-	public $_id;
+	private $_id;
 
 	public function __construct() {
 		$this->connect();
