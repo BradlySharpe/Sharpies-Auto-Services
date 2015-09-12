@@ -18,7 +18,7 @@
     }
 
     public function post() {
-      $this->db->prepareInsert(array('completed' => false));
+      $this->db->prepareInsert(array('completed' => 0));
       if ($this->db->insert($this->tableName)) {
         $this->get($this->db->lastId());
       } else {
@@ -34,7 +34,7 @@
 
       $result = RequiredFields::getFields(
         array(
-          'completed' => array('required' => true)
+          'completed' => array('required' => true, 'regex' => '/^(0|1)$/')
         ),
         $fields
       );
