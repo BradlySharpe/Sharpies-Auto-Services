@@ -60,7 +60,7 @@
     <script src="js/defaults.js"></script>
     <script>
       setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
-      $.ajax(SAS.baseURL + 'car', {
+      $.ajax(SAS.baseURL + 'cars', {
         type: 'GET',
         error: function() { setLoadingMessage("Failed to get Vehicles"); },
         success: function(res) {
