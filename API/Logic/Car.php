@@ -1,5 +1,6 @@
 <?php
 
+
   class Car {
     private $db;
     private $tableName = 'car';
@@ -10,10 +11,18 @@
       if (!empty($id))
         $sql .= " WHERE `id` = " . $this->db->escape($id);
       $result = array();
-      if (!empty($id))
+      if (!empty($id)) {
         $result = $this->db->fetchOne($sql);
-      else
+
+      } else {
         $result = $this->db->fetchAll($sql);
+        $customer = new Customer(false);
+        foreach ($result as $index => $car) {
+          $owner = $customer->get($car['owner']);
+          if (!empty($owner))
+            $result[$index]['owner'] = $owner;
+        }
+      }
       new Respond($result);
     }
 
