@@ -141,40 +141,43 @@
     Create Car
    */
   $Car['owner'] = $Warren['id'];
-  $result = $API->post('car', $Car, "Creating Car");
+  $result = $API->post('customer/' . $Car['owner'] . '/cars' , $Car, "Creating Car");
   if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
   foreach ($Car as $key => $value)
-    $API->test($result->data->{$key}, $value, $key);
+    if ('owner' != $key)
+      $API->test($result->data->{$key}, $value, $key);
   $Car['id'] = $result->data->id;
 
   /*
     Create Duplicate Car
       Should fail
    */
-  $result = $API->post('car', $Car, "Creating Duplicate Car");
+  $result = $API->post('customer/' . $Car['owner'] . '/cars', $Car, "Creating Duplicate Car");
   if (!$result->error) failed("Should have returned error - Cannot create duplicate cars");
   logMessage("  Couldn't create duplicate car - that's good!");
 
   /*
     Get Car
    */
-  $result = $API->get('car/' . $Car['id'], "Getting Car - ID: " . $Car['id']);
+  $result = $API->get('customer/' . $Car['owner'] . '/cars/' . $Car['id'], "Getting Car - ID: " . $Car['id']);
   if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
   foreach ($Car as $key => $value)
-    $API->test($result->data->{$key}, $value, $key);
+    if ('owner' != $key)
+      $API->test($result->data->{$key}, $value, $key);
 
   /*
     Update Car
       Change Owner
    */
-  $Car['owner'] = $Bradly['id'];
   $result = $API->put(
-    'car/' . $Car['id'],
-    array('owner' => $Car['owner']),
-    "Updating Car - Owner: " . $Car['owner']);
+    'customer/' . $Car['owner'] . '/cars/' . $Car['id'],
+    array('owner' => $Bradly['id']),
+    "Updating Car - Owner: " . $Bradly['id']);
   if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
+  $Car['owner'] = $Bradly['id'];
   foreach ($Car as $key => $value)
-    $API->test($result->data->{$key}, $value, $key);
+    if ('owner' != $key)
+      $API->test($result->data[0]->{$key}, $value, $key);
 
   /*
     Create Safety Check
