@@ -303,7 +303,7 @@
     Get Detail
    */
   $result = $API->get('detail/' . $Detail['id'], "Getting Detail - ID: " . $Detail['id']);
-  if ($result->error) failed("Didn't return item: " . $result->message . "\n" . json_encode($result->data));
+  if ($result->error) failed("Didn't return detail: " . $result->message . "\n" . json_encode($result->data));
   foreach ($Detail as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
 
@@ -324,6 +324,46 @@
     "Updating Item");
   if ($result->error) failed("Didn't return detail: " . $result->message . "\n" . json_encode($result->data));
   foreach ($Detail as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Create Payment
+   */
+  $Payment = array(
+    'invoice' => $Invoice['id'],
+    'amount' => 200,
+    'comment' => 'Description about payment',
+    'date' => date("Y-m-d")
+  );
+  $result = $API->post('payment', $Payment, "Creating Payment");
+  if ($result->error) failed("Didn't return payment: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Payment as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Payment['id'] = $result->data->id;
+
+  /*
+    Get Payment
+   */
+  $result = $API->get('payment/' . $Payment['id'], "Getting Payment - ID: " . $Payment['id']);
+  if ($result->error) failed("Didn't return payment: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Payment as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Update Payment
+      Comment and Amount
+   */
+  $Payment['comment'] = 'Different comment about payment';
+  $Payment['amount'] = 109.95;
+  $result = $API->put(
+    'payment/' . $Payment['id'],
+    array(
+      'comment' => $Payment['comment'],
+      'amount' => $Payment['amount']
+    ),
+    "Updating Item");
+  if ($result->error) failed("Didn't return payment: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Payment as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
 
   echo "\nTests Finished!\n";
