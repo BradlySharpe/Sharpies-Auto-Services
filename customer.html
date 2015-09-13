@@ -32,21 +32,50 @@
     <script src="js/defaults.js"></script>
     <script>
       setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
-      var customerId = parseInt(SAS.params['id'], 10)
-      if (0 < customerId) {
-        console.log(SAS.params);
-        $.ajax(SAS.baseURL + 'customer/' + customerId, {
+      var customerId = parseInt(SAS.params['id'], 10);
+      var customer = {};
+
+      getCars = function(callback) {
+        setLoadingMessage("Fetching Cars for " + customer.firstname);
+        $.ajax(SAS.baseURL + 'customer/' + customerId + '/cars', {
           type: 'GET',
           error: function() { setLoadingMessage("Failed to get Customer details"); },
           success: function(res) {
-            console.log(res);
             if (res.error) setLoadingMessage("Error: " + res.message);
             else {
-
+              customer.cars = res.data;
+              if ('function' == typeof callback)
+                callback();
             }
           }
-        })
-      }
+        });
+      };
+
+      getCustomer = function(callback) {
+        if (0 < customerId) {
+          $.ajax(SAS.baseURL + 'customer/' + customerId, {
+            type: 'GET',
+            error: function() { setLoadingMessage("Failed to get Customer details"); },
+            success: function(res) {
+
+              if (res.error) setLoadingMessage("Error: " + res.message);
+              else {
+                customer = res.data;
+                if ('function' == typeof callback)
+                  callback();
+              }
+            }
+          })
+        }
+      };
+
+      getCustomer(function() {
+        getCars(function() {
+            setLoadingMessage(customer.firstname + " " + customer.lastname);
+            console.log(customer);
+            alert("show cars and customer details");
+        });
+      });
     </script>
   </body>
 </html>
