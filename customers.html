@@ -26,7 +26,7 @@
           <h1 id="loadingMessage">Loading Customers</h1>
         </div>
       </div>
-      <form id="search" action="#" onsubmit="customerSearch()">
+      <form id="search">
         <div class="row">
           <div class="six columns offset-by-two">
             <input type="text" id="searchText" placeholder="Customers Name" />
@@ -85,7 +85,7 @@
         }
       });
 
-      function customerSearch() {
+      $("#search").submit(function() {
         try {
           var regex = new RegExp($("#searchText").val(), 'i');
           $("#noResults").addClass('hidden');
@@ -100,7 +100,9 @@
         } catch (ex) { console.error(ex) }
         $("#searchText").focus();
         return false;
-      };
+      });
+
+      $("#searchText").focus();
     </script>
   </body>
 </html>
