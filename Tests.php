@@ -65,7 +65,7 @@
       if ($value != $expected)
         failed("$testName - Expected '$expected', Got: '$value'");
       else
-        logMessage("  Passed: $testName");
+        logMessage("  Passed: $testName - value '$value'");
     }
   }
 
@@ -242,10 +242,88 @@
   foreach ($Invoice as $key => $value)
     $API->test($result->data->{$key}, $value, $key);
 
+  /*
+    Create Item
+   */
+  $Item = array(
+    'description' => 'Some part description',
+    'defaultCost' => 5.95,
+    'defaultQuantity' => 2.5,
+    'comment' => true,
+    'active' => true,
+  );
+  $result = $API->post('item', $Item, "Creating Item");
+  if ($result->error) failed("Didn't return item: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Item as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Item['id'] = $result->data->id;
 
   /*
-    Need to write Item tests
+    Get Item
    */
-  failed("Need to write Item tests");
+  $result = $API->get('item/' . $Item['id'], "Getting Item - ID: " . $Item['id']);
+  if ($result->error) failed("Didn't return item: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Item as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Update Item
+      Cost and Quantity
+   */
+  $Item['defaultCost'] = 20.95;
+  $Item['defaultQuantity'] = 20.95;
+  $result = $API->put(
+    'item/' . $Item['id'],
+    array(
+      'defaultCost' => $Item['defaultCost'],
+      'defaultQuantity' => $Item['defaultQuantity']
+    ),
+    "Updating Item");
+  if ($result->error) failed("Didn't return item: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Item as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Create Detail
+   */
+  $Detail = array(
+    'invoice' => $Invoice['id'],
+    'description' => 'Description about part',
+    'comment' => 'Description about work done',
+    'cost' => 100.05,
+    'quantity' => 2.5,
+  );
+  $result = $API->post('detail', $Detail, "Creating Detail");
+  if ($result->error) failed("Didn't return detail: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Detail as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+  $Detail['id'] = $result->data->id;
+
+  /*
+    Get Detail
+   */
+  $result = $API->get('detail/' . $Detail['id'], "Getting Detail - ID: " . $Detail['id']);
+  if ($result->error) failed("Didn't return item: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Detail as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
+
+  /*
+    Update Detail
+      Comment, Cost and Quantity
+   */
+  $Detail['comment'] = 'Different comment about work done';
+  $Detail['cost'] = 109.95;
+  $Detail['quantity'] = 3.5;
+  $result = $API->put(
+    'detail/' . $Detail['id'],
+    array(
+      'comment' => $Detail['comment'],
+      'cost' => $Detail['cost'],
+      'quantity' => $Detail['quantity']
+    ),
+    "Updating Item");
+  if ($result->error) failed("Didn't return detail: " . $result->message . "\n" . json_encode($result->data));
+  foreach ($Detail as $key => $value)
+    $API->test($result->data->{$key}, $value, $key);
 
   echo "\nTests Finished!\n";
