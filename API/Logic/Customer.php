@@ -3,7 +3,8 @@
   class Customer {
     private $db;
     private $tableName = 'customer';
-    public function __construct() { $this->db = new DBase(); }
+    private $respond = true;
+    public function __construct($_respond = true) { $this->respond = $_respond; $this->db = new DBase(); }
 
     public function get($id = null) {
       $sql = "SELECT * FROM {$this->tableName}";
@@ -14,7 +15,9 @@
         $result = $this->db->fetchOne($sql);
       else
         $result = $this->db->fetchAll($sql);
-      new Respond($result);
+      if ($this->respond)
+        new Respond($result);
+      else return $result;
     }
 
     public function post() {
