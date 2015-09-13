@@ -88,7 +88,7 @@ ALTER TABLE `invoice`
 --  Create Item table
 CREATE TABLE item (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  description INT NOT NULL,
+  description TEXT NOT NULL,
   defaultCost FLOAT NULL,
   defaultQuantity FLOAT NULL,
   comment BOOLEAN NULL DEFAULT TRUE,
@@ -100,7 +100,7 @@ CREATE TABLE item (
 CREATE TABLE detail (
   id INT AUTO_INCREMENT PRIMARY KEY,
   invoice INT NOT NULL,
-  item INT NOT NULL,
+  description TEXT NOT NULL,
   comment TEXT NULL,
   cost FLOAT NOT NULL,
   quantity FLOAT NOT NULL
@@ -109,13 +109,9 @@ CREATE TABLE detail (
 --    Add Detail Foreign Keys
 ALTER TABLE `detail`
   ADD INDEX `invoice` (`invoice`),
-  ADD INDEX `item` (`item`),
   ADD CONSTRAINT fk_detail_invoiceId
     FOREIGN KEY (invoice)
-      REFERENCES invoice(id),
-  ADD CONSTRAINT fk_detail_itemId
-    FOREIGN KEY (item)
-      REFERENCES item(id);
+      REFERENCES invoice(id);
 
 --  Create Payment table
 CREATE TABLE payment (
