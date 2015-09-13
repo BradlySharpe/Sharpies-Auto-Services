@@ -22,5 +22,9 @@
     '/service' => "Service",
     '/service/:number' => "Service",
     '/invoice' => "Invoice",
-    '/invoice/:number' => "Invoice"
+    '/invoice/:number' => "Invoice",
+    '/item' => "Item",
+    '/item/:number' => "Item",
+    '/detail' => "Detail",
+    '/detail/:number' => "Detail"
   ));
