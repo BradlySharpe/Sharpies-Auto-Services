@@ -6,14 +6,19 @@
     private $tableName = 'car';
     public function __construct() { $this->db = new DBase(); }
 
-    public function get($id = null) {
-      $sql = "SELECT * FROM {$this->tableName}";
-      if (!empty($id))
-        $sql .= " WHERE `id` = " . $this->db->escape($id);
+    public function get($customerId = null, $carId = null) {
+      $sql = "SELECT * FROM {$this->tableName} WHERE 1=1";
+      if (!empty($customerId))
+        $sql .= " AND `owner` = " . $this->db->escape($customerId);
+      if (!empty($carId))
+        $sql .= " AND `id` = " . $this->db->escape($carId);
       $result = array();
-      if (!empty($id)) {
+      if (!empty($carId)) {
         $result = $this->db->fetchOne($sql);
-
+        $customer = new Customer(false);
+        $owner = $customer->get($result['owner']);
+        if (!empty($owner))
+          $result['owner'] = $owner;
       } else {
         $result = $this->db->fetchAll($sql);
         $customer = new Customer(false);
@@ -26,10 +31,11 @@
       new Respond($result);
     }
 
-    public function post() {
+    public function post($customerId = null) {
+      if (empty($customerId)) new Error("Customer ID cannot be empty");
+
       $result = RequiredFields::getFields(
         array(
-          'owner' => array('required' => true, 'regex' => '/^\d+$/'),
           'make' => array('required' => true, 'regex' => '/^.{1,100}$/'),
           'model' => array('required' => true, 'regex' => '/^.{1,100}$/'),
           'registration' => array('required' => true, 'regex' => '/^[A-Z0-9]{1,6}$/')
@@ -40,9 +46,10 @@
       if ($result['error']) {
         new Error("Invalid values passed", $result['data']);
       } else {
+        $result['data']['owner'] = $customerId;
         $this->db->prepareInsert($result['data']);
         if ($this->db->insert($this->tableName)) {
-          $this->get($this->db->lastId());
+          $this->get($customerId, $this->db->lastId());
         } else {
           new Error("Error inserting car record");
         }
