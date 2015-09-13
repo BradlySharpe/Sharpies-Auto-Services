@@ -2,7 +2,7 @@
   $populate = 1;
   if ($populate) {
     echo "Refreshing Database...\n";
-    $con = mysql_connect('localhost', 'autoservice', 'password') or
+    $con = @mysql_connect('localhost', 'autoservice', 'password') or
       // User must have following permissions:
       //  SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE ROUTINE, EXECUTE
       die('Error connecting to MySQL server: ' . mysql_error());
