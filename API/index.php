@@ -15,8 +15,9 @@
   Toro::serve(array(
     '/customer' => "Customer",
     '/customer/:number' => "Customer",
-    '/car' => "Car",
-    '/car/:number' => "Car",
+    '/customer/:number/cars' => "Car",
+    '/customer/:number/cars/:number' => "Car",
+    '/cars' => "Car",
     '/safetycheck' => "SafetyCheck",
     '/safetycheck/:number' => "SafetyCheck",
     '/service' => "Service",
