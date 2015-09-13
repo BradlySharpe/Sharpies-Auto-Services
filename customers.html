@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Customers - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Loading Customers</h1>
+        </div>
+      </div>
+      <form id="search" action="#" onsubmit="customerSearch()">
+        <div class="row">
+          <div class="six columns offset-by-two">
+            <input type="text" id="searchText" placeholder="Customers Name" />
+          </div>
+          <div class="two columns">
+            <input type="submit" class="button button-primary" value="Search" />
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="customer" class="hidden">
+            <thead>
+              <th><!-- Select --></th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>City</th>
+              <th>Postcode</th>
+            </thead>
+            <tbody id="customerList"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <h4 id="noResults" class="hidden">No Customers</h4>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+      $.ajax(SAS.baseURL + 'customer', {
+        type: 'GET',
+        error: function() { setLoadingMessage("Failed to get Customers"); },
+        success: function(res) {
+          if (res.error) setLoadingMessage("Error: " + res.message);
+          else {
+            res.data = res.data.sort(sort_by('lastname', { name: 'firstname' }));
+            if (!res.data.length) $("#noResults").removeClass('hidden');
+            for (var i = 0; i < res.data.length; i++) {
+              customer = res.data[i];
+              var row = "<tr>" +
+                "<td class=\"textcenter\"><a class=\"button button-primary\" href=\"customer.html#id=" + customer.id + "\">View</a></td>" +
+                "<td>" + customer.firstname + " " + customer.lastname + "</td>" +
+                "<td>" + customer.address + "</td>" +
+                "<td>" + customer.city + ", " + customer.state + "</td>" +
+                "<td class=\"textright\">" + customer.postcode + "</td>" +
+              "</tr>";
+              $('#customer').find('tbody').append(row);
+            };
+            $("#customer").toggleClass('hidden');
+            setLoadingMessage("Customers");
+          }
+        }
+      });
+
+      function customerSearch() {
+        try {
+          var regex = new RegExp($("#searchText").val(), 'i');
+          $("#noResults").addClass('hidden');
+          $('#customer').find('tbody tr td:nth-child(2)').each(function(){
+            $this = $(this);
+            $this.parent().removeClass('hidden');
+            if (!regex.test($this.text()))
+              $this.parent().addClass('hidden');
+          });
+          if (!$('#customer').find('tbody tr:not(.hidden)').length)
+            $("#noResults").removeClass('hidden');
+        } catch (ex) { console.error(ex) }
+        $("#searchText").focus();
+        return false;
+      };
+    </script>
+  </body>
+</html>

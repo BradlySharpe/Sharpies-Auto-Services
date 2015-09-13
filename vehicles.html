@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Vehicles - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Loading Vehicles</h1>
+        </div>
+      </div>
+      <form id="search" action="#" onsubmit="vehicleSearch()">
+        <div class="row">
+          <div class="six columns offset-by-two">
+            <input type="text" id="searchText" placeholder="Vehicle Registration" />
+          </div>
+          <div class="two columns">
+            <input type="submit" class="button button-primary" value="Search" />
+          </div>
+        </div>
+      </form>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="vehicle" class="hidden">
+            <thead>
+              <th><!-- Select --></th>
+              <th>Registration</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Owner</th>
+            </thead>
+            <tbody id="vehicleList"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <h4 id="noResults" class="hidden">No Vehicles</h4>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+      $.ajax(SAS.baseURL + 'car', {
+        type: 'GET',
+        error: function() { setLoadingMessage("Failed to get Vehicles"); },
+        success: function(res) {
+          if (res.error) setLoadingMessage("Error: " + res.message);
+          else {
+            res.data = res.data.sort(sort_by('make', { name: 'model' }));
+            if (!res.data.length) $("#noResults").removeClass('hidden');
+            for (var i = 0; i < res.data.length; i++) {
+              vehicle = res.data[i];
+              var row = "<tr>" +
+                "<td class=\"textcenter\"><a class=\"button button-primary\" href=\"#id=" + vehicle.id + "\">Select</a></td>" +
+                "<td>" + vehicle.registration + "</td>" +
+                "<td>" + vehicle.make + "</td>" +
+                "<td>" + vehicle.model + "</td>" +
+                "<td data-id=\"" + vehicle.owner.id + "\">" + vehicle.owner.firstname + " " + vehicle.owner.lastname + "</td>" +
+              "</tr>";
+              $('#vehicle').find('tbody').append(row);
+            };
+            $("#vehicle").toggleClass('hidden');
+            setLoadingMessage("Vehicle");
+          }
+        }
+      });
+
+      function vehicleSearch() {
+        try {
+          var regex = new RegExp($("#searchText").val(), 'i');
+          $("#noResults").addClass('hidden');
+          $('#vehicle').find('tbody tr td:nth-child(2)').each(function(){
+            $this = $(this);
+            $this.parent().removeClass('hidden');
+            if (!regex.test($this.text()))
+              $this.parent().addClass('hidden');
+          });
+          if (!$('#vehicle').find('tbody tr:not(.hidden)').length)
+            $("#noResults").removeClass('hidden');
+        } catch (ex) { console.error(ex) }
+        $("#searchText").focus();
+        return false;
+      };
+    </script>
+  </body>
+</html>

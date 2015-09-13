@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Customer - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Loading Customer</h1>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+      var customerId = parseInt(SAS.params['id'], 10)
+      if (0 < customerId) {
+        console.log(SAS.params);
+        $.ajax(SAS.baseURL + 'customer/' + customerId, {
+          type: 'GET',
+          error: function() { setLoadingMessage("Failed to get Customer details"); },
+          success: function(res) {
+            console.log(res);
+            if (res.error) setLoadingMessage("Error: " + res.message);
+            else {
+
+            }
+          }
+        })
+      }
+    </script>
+  </body>
+</html>
