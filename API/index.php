@@ -26,5 +26,7 @@
     '/item' => "Item",
     '/item/:number' => "Item",
     '/detail' => "Detail",
-    '/detail/:number' => "Detail"
+    '/detail/:number' => "Detail",
+    '/payment' => "Payment",
+    '/payment/:number' => "Payment"
   ));
