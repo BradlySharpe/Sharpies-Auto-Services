@@ -12,7 +12,7 @@ var SAS = {
   }
 };
 SAS.getParams();
-console.log(SAS.params);
+console.log("Params", SAS);
 
 var sort_by;
 (function() {
