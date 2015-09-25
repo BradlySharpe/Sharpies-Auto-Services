@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Customer - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Loading Vehicle</h1>
+        </div>
+      </div>
+      <div class="row u-margin-bottom">
+        <div class="five columns">
+          <h5>Vehicle Details</h5>
+          <div>
+            <label class="large">Make:</label> <span class="large" id="vehicleMake"></span>
+          </div>
+          <div>
+            <label class="large">Model:</label> <span class="large" id="vehicleModel"></span>
+          </div>
+          <div>
+            <label class="large">Rego:</label> <span class="large" id="vehicleRego"></span>
+          </div>
+        </div>
+        <div class="five offset-by-one columns">
+          <h5>Customer Details</h5>
+          <div>
+            <label class="large">Name:</label> <span class="large" id="customerName"></span>
+          </div>
+          <div>
+            <label class="large">Address:</label> <span class="large" id="customerAddress"></span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h2 class="u-left u-inline">Service History</h2>
+          <a href="#" class="button button-medium u-float-right" title="New Service">New Service</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="service" class="hidden">
+            <thead>
+              <th>Date</th>
+              <th>Odometer</th>
+              <th>Safety Check</th>
+              <th>Invoice</th>
+            </thead>
+            <tbody id="serviceList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+      var customerId = parseInt(SAS.params['customer'], 10),
+        vehicleId = parseInt(SAS.params['vehicle'], 10),
+        vehicle = {};
+      console.log("Params", customerId, vehicleId);
+
+      getCar = function() {
+        setLoadingMessage("Fetching Vehicle");
+        $.ajax(SAS.baseURL + 'customer/' + customerId + '/cars/' + vehicleId, {
+          type: 'GET',
+          error: function() { setLoadingMessage("Failed to get Customer details"); },
+          success: function(res) {
+            if (res.error) setLoadingMessage("Error: " + res.message);
+            else {
+              console.log(res);
+              vehicle = res.data;
+              setLoadingMessage("Vehicle");
+              $("#vehicleMake").text(vehicle.make);
+              $("#vehicleModel").text(vehicle.model);
+              $("#vehicleRego").text(vehicle.registration);
+              $("#customerName").text(vehicle.owner.firstname + " " + vehicle.owner.lastname);
+              $("#customerAddress").text(vehicle.owner.address + ", " + vehicle.owner.city + ", " + vehicle.owner.state + " " + vehicle.owner.postcode);
+
+              vehicle.services = vehicle.services.sort(sort_by({name: 'created', reverse: true}, { name: 'odo', reverse: true}));
+              if (!vehicle.services.length) $("#noResults").removeClass('hidden');
+              for (var i = 0; i < vehicle.services.length; i++) {
+                var service = vehicle.services[i],
+                  created = new Date(service.created);
+                  created = ((created.getDate() < 10 ? ("0" + created.getDate()) : created.getDate()) + "/" + (created.getMonth() < 9 ? ("0" + (created.getMonth() + 1)) : (created.getMonth() + 1)) + "/" + created.getFullYear())
+                var row = "<tr>" +
+                  "<td>" + created + "</td>" +
+                  "<td>" + service.odo + "</td>" +
+                  "<td>" + service.safetyCheck + "</td>" +
+                  "<td>" + (null == service.invoice ? "<a href=\"invoice.html#service=" + service.id + "\" title=\"Create Invoice\">Create Invoice</a>" : service.invoice) + "</td>" +
+                "</tr>";
+                $('#service').find('tbody').append(row);
+              };
+              $("#service").toggleClass('hidden');
+            }
+          }
+        });
+      };
+      getCar();
+    </script>
+  </body>
+</html>
