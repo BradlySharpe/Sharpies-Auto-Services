@@ -71,7 +71,7 @@
             for (var i = 0; i < res.data.length; i++) {
               vehicle = res.data[i];
               var row = "<tr>" +
-                "<td class=\"textcenter\"><a class=\"button button-primary\" href=\"#id=" + vehicle.id + "\">Select</a></td>" +
+                "<td class=\"textcenter\"><a class=\"button button-primary\" href=\"service.html#customer=" + vehicle.owner.id + "&vehicle=" + vehicle.id + "\">Select</a></td>" +
                 "<td>" + vehicle.registration + "</td>" +
                 "<td>" + vehicle.make + "</td>" +
                 "<td>" + vehicle.model + "</td>" +
@@ -80,12 +80,12 @@
               $('#vehicle').find('tbody').append(row);
             };
             $("#vehicle").toggleClass('hidden');
-            setLoadingMessage("Vehicle");
+            setLoadingMessage("Vehicles");
           }
         }
       });
 
-      $("#search").submit(function() {
+      var updateSearch = function() {
         try {
           var regex = new RegExp($("#searchText").val(), 'i');
           $("#noResults").addClass('hidden');
@@ -98,10 +98,18 @@
           if (!$('#vehicle').find('tbody tr:not(.hidden)').length)
             $("#noResults").removeClass('hidden');
         } catch (ex) { console.error(ex) }
+      };
+
+      $("#searchText").keyup(function() {
+        updateSearch();
+      });
+
+      $("#search").submit(function() {
+        updateSearch();
         $("#searchText").focus();
         return false;
       });
-      
+
       $("#searchText").focus();
     </script>
   </body>
