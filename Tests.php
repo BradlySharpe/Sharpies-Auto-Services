@@ -173,11 +173,11 @@
     'customer/' . $Car['owner'] . '/cars/' . $Car['id'],
     array('owner' => $Bradly['id']),
     "Updating Car - Owner: " . $Bradly['id']);
-  if ($result->error) failed("Didn't return safety check: " . $result->message . "\n" . json_encode($result->data));
+  if ($result->error) failed("Didn't return car: " . $result->message . "\n" . json_encode($result->data));
   $Car['owner'] = $Bradly['id'];
   foreach ($Car as $key => $value)
     if ('owner' != $key)
-      $API->test($result->data[0]->{$key}, $value, $key);
+      $API->test($result->data->{$key}, $value, $key);
 
   /*
     Create Safety Check
