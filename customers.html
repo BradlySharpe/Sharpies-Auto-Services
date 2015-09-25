@@ -85,7 +85,7 @@
         }
       });
 
-      $("#search").submit(function() {
+      var updateSearch = function() {
         try {
           var regex = new RegExp($("#searchText").val(), 'i');
           $("#noResults").addClass('hidden');
@@ -98,6 +98,14 @@
           if (!$('#customer').find('tbody tr:not(.hidden)').length)
             $("#noResults").removeClass('hidden');
         } catch (ex) { console.error(ex) }
+      };
+
+      $("#searchText").keyup(function() {
+        updateSearch();
+      });
+
+      $("#search").submit(function() {
+        updateSearch();
         $("#searchText").focus();
         return false;
       });
