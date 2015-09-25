@@ -26,6 +26,23 @@
           <h1 id="loadingMessage">Loading Customer</h1>
         </div>
       </div>
+      <div class="row u-center">
+        <label class="large">Address: </label><span id="customerAddress" class="large"></span>
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="vehicle" class="hidden">
+            <thead>
+              <th><!-- Select --></th>
+              <th>Registration</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Owner</th>
+            </thead>
+            <tbody id="vehicleList"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
     <script src="js/jquery-2.1.4.min.js"></script>
@@ -73,7 +90,21 @@
         getCars(function() {
             setLoadingMessage(customer.firstname + " " + customer.lastname);
             console.log(customer);
-            alert("show cars and customer details");
+            $("#customerAddress").text(customer.address + ", " + customer.city + ", " + customer.state + " " + customer.postcode);
+            customer.cars = customer.cars.sort(sort_by('make', { name: 'model' }));
+            if (!customer.cars.length) $("#noResults").removeClass('hidden');
+            for (var i = 0; i < customer.cars.length; i++) {
+              vehicle = customer.cars[i];
+              var row = "<tr>" +
+                "<td class=\"textcenter\"><a class=\"button button-primary\" href=\"service.html#customer=" + customer.id + "&vehicle=" + vehicle.id + "\">Select</a></td>" +
+                "<td>" + vehicle.registration + "</td>" +
+                "<td>" + vehicle.make + "</td>" +
+                "<td>" + vehicle.model + "</td>" +
+                "<td data-id=\"" + vehicle.owner.id + "\">" + vehicle.owner.firstname + " " + vehicle.owner.lastname + "</td>" +
+              "</tr>";
+              $('#vehicle').find('tbody').append(row);
+            };
+            $("#vehicle").toggleClass('hidden');
         });
       });
     </script>
