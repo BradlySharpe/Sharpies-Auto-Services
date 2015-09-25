@@ -17,6 +17,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   text-align: center;
+  margin: 0;
 }
 
 table {
@@ -44,10 +45,6 @@ table tbody tr:nth-child(even) {
   background-color:#dde0d3;
 }
 
-label {
-  text-align: right;
-}
-
 input[type="text"] {
   width: 100%;
 }
@@ -65,33 +62,94 @@ td:last-child {
   display: none;
 }
 
-.button.button-large,
-button.button-large,
-input[type="submit"].button-large,
-input[type="reset"].button-large,
-input[type="button"].button-large,
-.button.button-large:focus,
-button.button-large:focus,
-input[type="submit"].button-large:focus,
-input[type="reset"].button-large:focus,
-input[type="button"].button-large:focus {
+.button.button-medium,
+button.button-medium,
+input[type="submit"].button-medium,
+input[type="reset"].button-medium,
+input[type="button"].button-medium,
+.button.button-medium:focus,
+button.button-medium:focus,
+input[type="submit"].button-medium:focus,
+input[type="reset"].button-medium:focus,
+input[type="button"].button-medium:focus {
   background-color: #ae1b1f;
   font-weight: 800;
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: #d9e0c5;
-  border: .5rem solid #282126;
-  border-radius: .8rem;
+  border: .4rem solid #282126;
+  border-radius: .5rem;
   line-height: normal;
   height: auto;
-  padding: 1.5rem;
+  padding: .8rem;
   margin: auto;
  }
 
-.button.button-large:hover,
-button.button-large:hover,
-input[type="submit"].button-large:hover,
-input[type="reset"].button-large:hover,
-input[type="button"].button-large:hover {
+.button.button-medium:hover,
+button.button-medium:hover,
+input[type="submit"].button-medium:hover,
+input[type="reset"].button-medium:hover,
+input[type="button"].button-medium:hover {
   color: #ae1b1f;
   background-color: #d9e0c5;
   border-color: #282126; }
+
+
+  .button.button-large,
+  button.button-large,
+  input[type="submit"].button-large,
+  input[type="reset"].button-large,
+  input[type="button"].button-large,
+  .button.button-large:focus,
+  button.button-large:focus,
+  input[type="submit"].button-large:focus,
+  input[type="reset"].button-large:focus,
+  input[type="button"].button-large:focus {
+    background-color: #ae1b1f;
+    font-weight: 800;
+    font-size: 2rem;
+    color: #d9e0c5;
+    border: .5rem solid #282126;
+    border-radius: .8rem;
+    line-height: normal;
+    height: auto;
+    padding: 1.5rem;
+    margin: auto;
+   }
+
+  .button.button-large:hover,
+  button.button-large:hover,
+  input[type="submit"].button-large:hover,
+  input[type="reset"].button-large:hover,
+  input[type="button"].button-large:hover {
+    color: #ae1b1f;
+    background-color: #d9e0c5;
+    border-color: #282126; }
+
+
+label {
+  display: inline-block;
+}
+
+.large {
+  font-size: 2rem;
+}
+
+.u-center {
+  text-align: center;
+}
+
+.u-margin-bottom {
+  margin-bottom: 5rem;
+}
+
+.u-left {
+  text-align: left;
+}
+
+.u-float-right {
+  float: right;
+}
+
+.u-inline {
+  display: inline-block;
+}
