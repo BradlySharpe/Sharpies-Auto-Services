@@ -13,12 +13,16 @@
       if (!empty($carId))
         $sql .= " AND `id` = " . $this->db->escape($carId);
       $result = array();
+
+      $service = new Service();
+
       if (!empty($carId)) {
         $result = $this->db->fetchOne($sql);
         $customer = new Customer(false);
         $owner = $customer->get($result['owner']);
         if (!empty($owner))
           $result['owner'] = $owner;
+        $result['services'] = $service->getForCar($carId);
       } else {
         $result = $this->db->fetchAll($sql);
         $customer = new Customer(false);
@@ -26,6 +30,7 @@
           $owner = $customer->get($car['owner']);
           if (!empty($owner))
             $result[$index]['owner'] = $owner;
+          $result['services'] = $service->getForCar($car['id']);
         }
       }
       new Respond($result);
@@ -56,8 +61,8 @@
       }
     }
 
-    public function put($id = null) {
-      if (empty($id))
+    public function put($customerId = null, $carId = null) {
+      if (empty($carId))
         new Error("Car ID cannot be empty");
       $fields = array();
       parse_str(file_get_contents("php://input"), $fields);
@@ -78,8 +83,8 @@
 
       if (0 < count($fields)) {
         $this->db->prepareUpdate($fields);
-        if ($this->db->update($this->tableName, $id)) {
-          $this->get($id);
+        if ($this->db->update($this->tableName, $carId)) {
+          $this->get((array_key_exists('owner', $fields) ? $fields['owner'] : $customerId), $carId);
         } else
           new Error("Could not update customer");
       } else
