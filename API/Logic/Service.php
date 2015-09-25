@@ -17,6 +17,11 @@
       new Respond($result);
     }
 
+    public function getForCar($carId) {
+      $sql = "SELECT serv.id, serv.car, serv.odo, serv.safetyCheck, serv.created, inv.id as 'invoice', chk.completed FROM {$this->tableName} serv LEFT JOIN `invoice` inv ON inv.service = serv.id LEFT JOIN `safetyCheck` chk ON chk.id = serv.safetyCheck WHERE serv.car = " . $this->db->escape($carId);
+      return $this->db->fetchAll($sql);
+    }
+
     public function post() {
       $result = RequiredFields::getFields(
         array(
