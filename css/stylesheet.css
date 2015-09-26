@@ -24,13 +24,6 @@ table {
   width: 100%;
 }
 
-.textright {
-  text-align: right;
-}
-.textcenter {
-  text-align: center;
-}
-
 .header {
   border-bottom: .1rem solid #333;
   margin-bottom: 2rem;
@@ -134,8 +127,14 @@ label {
   font-size: 2rem;
 }
 
-.u-center {
+.u-center,
+.textcenter {
   text-align: center;
+}
+
+.u-right,
+.textright {
+  text-align: right;
 }
 
 .u-margin-bottom {
