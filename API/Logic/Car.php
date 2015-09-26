@@ -30,7 +30,7 @@
           $owner = $customer->get($car['owner']);
           if (!empty($owner))
             $result[$index]['owner'] = $owner;
-          $result['services'] = $service->getForCar($car['id']);
+          $result[$index]['services'] = $service->getForCar($car['id']);
         }
       }
       new Respond($result);
