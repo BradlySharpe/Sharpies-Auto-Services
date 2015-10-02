@@ -50,9 +50,41 @@
           </table>
         </div>
       </div>
-      <div class="row">
+      <div class="row hidden" id="noResults">
         <div class="twelve columns">
-          <h4 id="noResults" class="hidden">No Customers</h4>
+          <h4>No Customers Found</h4>
+          <h5>Add New Customer</h5>
+          <form id="addNewCustomer">
+            <div class="row">
+              <div class="six columns">
+                <label for="firstname">First Name:</label><input type="text" name="firstname" id="firstname" />
+              </div>
+              <div class="six columns">
+                <label for="lastname">Surname:</label><input type="text" name="lastname" id="lastname" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="twelve columns">
+                <label for="address">Address:</label><input type="text" name="address" id="address" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="four columns">
+                <label for="city">City:</label><input type="text" name="city" id="city" value="Warrnambool" />
+              </div>
+              <div class="four columns">
+                <label for="state">State:</label><input type="text" name="state" id="state" value="Victoria" />
+              </div>
+              <div class="four columns">
+                <label for="postcode">Post Code:</label><input type="text" name="postcode" id="postcode" value="3280" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="twelve columns">
+                <input type="submit" class="button button-primary" value="Add New" />
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -111,6 +143,28 @@
       });
 
       $("#searchText").focus();
+
+      $("#search").submit(function() {
+        updateSearch();
+        $("#searchText").focus();
+        return false;
+      });
+
+      $("#addNewCustomer").submit(function() {
+        $.ajax(SAS.baseURL + 'customer', {
+          type: 'POST',
+          dataType: 'json',
+          data: $("#addNewCustomer").serialize(),
+          error: function() { alert("Failed to create new customer"); },
+          success: function(res) {
+            if (res.error) alert("Error: " + res.message);
+            var parts = window.location.toString().split("/");
+            parts[parts.length-1] = "customer.html#id=" + res.data.id;
+            window.location = parts.join("/");
+          }
+        });
+        return false;
+      });
     </script>
   </body>
 </html>
