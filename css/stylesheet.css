@@ -53,6 +53,7 @@ td:last-child {
 
 .hidden {
   display: none;
+  overflow: hidden;
 }
 
 .button.button-medium,
@@ -151,4 +152,26 @@ label {
 
 .u-inline {
   display: inline-block;
+}
+
+#noResults h4 {
+  margin-bottom: 2rem;
+}
+
+input[type='checkbox'] {
+  height: 3.8rem;
+  width: 3.8rem;
+}
+
+#printInvoice {
+  margin-bottom: 2rem;
+}
+
+#invoice textarea {
+  width: 100%;
+  max-width: 100%;
+}
+
+input[type="button"].button-primary.delete {
+  padding: 0 18px;
 }
