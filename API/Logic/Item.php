@@ -6,9 +6,9 @@
     public function __construct() { $this->db = new DBase(); }
 
     public function get($id = null) {
-      $sql = "SELECT * FROM {$this->tableName}";
+      $sql = "SELECT * FROM {$this->tableName} WHERE `active` = 1";
       if (!empty($id))
-        $sql .= " WHERE `id` = " . $this->db->escape($id);
+        $sql .= " AND `id` = " . $this->db->escape($id);
       $result = array();
       if (!empty($id))
         $result = $this->db->fetchOne($sql);
