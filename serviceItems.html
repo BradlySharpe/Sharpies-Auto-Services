@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Service Items - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Add New Service Item</h1>
+        </div>
+      </div>
+      <div class="row" id="noResults">
+        <div class="twelve columns">
+          <form id="addNewServiceItem">
+            <div class="row">
+              <div class="twelve columns">
+                <label for="description">Description:</label><input type="text" name="description" id="description" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="four columns">
+                <label for="defaultCost"> Default Cost:</label><input type="text" name="defaultCost" id="defaultCost" />
+              </div>
+              <div class="four columns">
+                <label for="defaultQuantity">Default Quantity:</label><input type="text" name="defaultQuantity" id="defaultQuantity" />
+              </div>
+              <div class="four columns">
+                <label for="comment">Can Have Comments:</label><br />
+                <input type="checkbox" id="comment" checked="checked" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="twelve columns">
+                <input type="submit" class="button button-primary" value="Add New" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      $("#description").focus();
+      $("#addNewServiceItem").submit(function() {
+        var formData = $("#addNewServiceItem").serialize();
+        formData += "&comment=" + ($("#comment").checked ? "1" : "0");
+        $.ajax(SAS.baseURL + 'item', {
+          type: 'POST',
+          dataType: 'json',
+          data: formData,
+          error: function() { alert("Failed to create new customer"); },
+          success: function(res) {
+            if (res.error) alert("Error: " + res.message);
+            else {
+              alert("Created Item");
+              $("#addNewServiceItem").trigger('reset');
+              $("#description").focus();
+            }
+          }
+        });
+        return false;
+      });
+    </script>
+  </body>
+</html>
