@@ -43,6 +43,29 @@
           </table>
         </div>
       </div>
+      <div class="row">
+        <div class="twelve columns">
+          <h5>Add New Vehicle</h5>
+          <form id="addNewVehicle">
+            <div class="row">
+              <div class="four columns">
+                <label for="make">Make:</label><input type="text" name="make" id="make" />
+              </div>
+              <div class="four columns">
+                <label for="model">Model:</label><input type="text" name="model" id="model" />
+              </div>
+              <div class="four columns">
+                <label for="registration">Rego:</label><input type="text" name="registration" id="registration" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="twelve columns">
+                <input type="submit" class="button button-primary" value="Add New" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
     <script src="js/jquery-2.1.4.min.js"></script>
@@ -106,6 +129,23 @@
             };
             $("#vehicle").toggleClass('hidden');
         });
+      });
+
+      $("#addNewVehicle").submit(function() {
+        var formData = $("#addNewVehicle").serialize();
+        formData += "&owner=" + customerId;
+        console.log(SAS.baseURL + 'customer/' + customerId + "/cars", formData);
+        $.ajax(SAS.baseURL + 'customer/' + customerId + "/cars", {
+          type: 'POST',
+          dataType: 'json',
+          data: formData,
+          error: function() { alert("Failed to create new vehicle"); },
+          success: function(res) {
+            if (res.error) alert("Error: " + res.message);
+            window.location.reload();
+          }
+        });
+        return false;
       });
     </script>
   </body>
