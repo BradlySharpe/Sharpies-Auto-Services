@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Customer - Sharpie's Auto Services</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="twelve columns">
+          <a href="/Sharpies-Auto-Services/" title="Home">
+            <img class="logo" src="images/logo.png" />
+          </a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns header">
+          <h1 id="loadingMessage">Loading Items</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="five columns"><strong>Item</strong></div>
+        <div class="two columns"><strong>Cost</strong></div>
+        <div class="two columns"><strong>Quantity</strong></div>
+        <div class="two columns"><strong>Total</strong></div>
+      </div>
+      <div class="row" id="invoice">
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <a id="printInvoice" class="button button-primary hidden">Print Invoice</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="items" class="hidden">
+            <thead>
+              <th><!-- Select --></th>
+              <th>Description</th>
+            </thead>
+            <tbody id="itemsList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/defaults.js"></script>
+    <script>
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+      var serviceId = parseInt(SAS.params['service'], 10),
+        detailLines = [],
+        invoiceId;
+
+      addInvoiceLine = function(item) {
+        var row = "<div class=\"row invoiceLine\">" +
+          "<div class=\"five columns\"><input type=\"text\" name=\"description\" value=\"" + item.description + "\" /></div>" +
+          "<div class=\"two columns\"><input type=\"text\" class=\"cost\" name=\"quan\" value=\"" + item.defaultCost + "\" /></div>" +
+          "<div class=\"two columns\"><input type=\"text\" class=\"quan\" name=\"cost\" value=\"" + item.defaultQuantity + "\" /></div>" +
+          "<div class=\"two columns\"><input type=\"text\" disabled=\"disabled\" name=\"cost\" value=\"$" + (item.defaultCost * item.defaultQuantity).formatMoney(2) + "\"/></div>" +
+          "<div class=\"one columns\"><input type=\"button\" class=\"button-primary delete\" value=\"X\" /></div>";
+          if (item.comment) {
+            row += "<div class=\"row\">" +
+              "<div class=\"eight columns\"><textarea name=\"comment\"></textarea></div>" +
+            "</div>";
+          }
+          row +="</div>";
+        $('#invoice').append(row).find('.invoiceLine:last-child input[name="description"]').focus();
+        showPrint();
+      }
+
+      loadItems = function() {
+        $.ajax(SAS.baseURL + 'item', {
+          type: 'GET',
+          error: function() { setLoadingMessage("Failed to get Items"); },
+          success: function(res) {
+            if (res.error) setLoadingMessage("Error: " + res.message);
+            else {
+              res.data = res.data.sort(sort_by('description'));
+              for (var i = 0; i < res.data.length; i++) {
+                item = res.data[i];
+                var row = "<tr>" +
+                  "<td class=\"textcenter\"><a class=\"button button-primary serviceItem\" data-id=\"" + item.id +
+                    "\" data-defaultCost=\"" + item.defaultCost +
+                    "\" data-defaultQuantity=\"" + item.defaultQuantity +
+                    "\" data-comment=\"" + item.comment +
+                    "\" data-description=\"" + item.description +
+                    "\">Add</a></td>" +
+                  "<td>" + item.description + "</td>" +
+                "</tr>";
+                $('#items').find('tbody').append(row);
+              };
+              $("#items").toggleClass('hidden');
+              setLoadingMessage("Create Invoice");
+            }
+          }
+        });
+      }
+
+      showPrint = function() {
+        if ($("#invoice .invoiceLine").length)
+          $("#printInvoice").removeClass('hidden');
+        else
+          $("#printInvoice").addClass('hidden');
+      }
+
+      $(document).on('click', '.serviceItem', function(e) {
+        e.preventDefault();
+        $this = $(this);
+        addInvoiceLine({
+          id: $this.attr('data-id'),
+          defaultCost: $this.attr('data-defaultCost'),
+          defaultQuantity: $this.attr('data-defaultQuantity'),
+          comment: $this.attr('data-comment'),
+          description: $this.attr('data-description'),
+        });
+        return false;
+      })
+
+      loadItems();
+
+      calcLineTotal = function(row) {
+        row[3].value = "$" + (row[1].value * row[2].value).formatMoney(2);
+      }
+
+      $(document).on('keyup', '.cost', function(e) {
+        calcLineTotal($(this).parent().parent().find('input'));
+      });
+
+      $(document).on('keyup', '.quan', function(e) {
+        calcLineTotal($(this).parent().parent().find('input'));
+      });
+
+      $(document).on('click', '.delete', function(e) {
+        $(this).parent().parent().remove();
+        showPrint();
+      });
+
+      $("#printInvoice").click(function() {
+        var lines = $(".invoiceLine");
+        detailLines = [];
+
+        for (var i = 0; i < lines.length; i++) {
+          var $inputs = $(lines[i]).find('input'),
+            textarea = $(lines[i]).find('textarea'),
+            comment = (textarea.length) ? textarea[0].value : "";
+
+
+          detailLines.push({
+            description: $inputs[0].value,
+            cost: $inputs[1].value,
+            quantity: $inputs[2].value,
+            comment: comment
+          });
+        }
+        console.log(detailLines);
+
+        $.ajax(SAS.baseURL + 'invoice', {
+          type: 'POST',
+          data: {
+            service: serviceId
+          },
+          error: function() { alert("Failed to create new invoice"); },
+          success: function(res) {
+            if (res.error) alert("Error: " + res.message);
+            invoiceId = res.data.id;
+            postDetailLine();
+          }
+        });
+      });
+
+      postDetailLine = function() {
+        if (detailLines.length) {
+          var line = detailLines.shift();
+          console.log(line);
+          $.ajax(SAS.baseURL + 'detail', {
+            type: 'POST',
+            data: {
+              invoice: invoiceId,
+              description: line.description,
+              comment: line.comment,
+              cost: line.cost,
+              quantity: line.quantity
+            },
+            error: function() { alert("Failed to create new invoice line"); },
+            success: function(res) {
+              if (res.error) alert("Error: " + res.message);
+              postDetailLine();
+            }
+          });
+        } else
+          printInvoice();
+      }
+
+      printInvoice = function() {
+        console.log("printing");
+      }
+
+      $("#addNewVehicle").submit(function() {
+        var formData = $("#addNewVehicle").serialize();
+        formData += "&owner=" + customerId;
+        console.log(SAS.baseURL + 'customer/' + customerId + "/cars", formData);
+
+      });
+    </script>
+  </body>
+</html>
