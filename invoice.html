@@ -39,6 +39,9 @@
           <a id="printInvoice" class="button button-primary hidden">Print Invoice</a>
         </div>
       </div>
+      <div class="parts">
+        <h4>Service Items:</h4>
+      </div>
       <div class="row">
         <div class="twelve columns">
           <table id="items" class="hidden">
@@ -87,6 +90,7 @@
               res.data = res.data.sort(sort_by('description'));
               for (var i = 0; i < res.data.length; i++) {
                 item = res.data[i];
+                console.log('Adding', item);
                 var row = "<tr>" +
                   "<td class=\"textcenter\"><a class=\"button button-primary serviceItem\" data-id=\"" + item.id +
                     "\" data-defaultCost=\"" + item.defaultCost +
@@ -201,7 +205,8 @@
       }
 
       printInvoice = function() {
-        console.log("printing");
+        window.open(SAS.baseURL + 'invoice.php?id=' + invoiceId);
+        window.location.pathname = SAS.baseURL;
       }
 
       $("#addNewVehicle").submit(function() {
