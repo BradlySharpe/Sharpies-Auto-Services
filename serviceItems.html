@@ -62,11 +62,12 @@
       $("#addNewServiceItem").submit(function() {
         var formData = $("#addNewServiceItem").serialize();
         formData += "&comment=" + ($("#comment").checked ? "1" : "0");
+        formData += "&active=1";
         $.ajax(SAS.baseURL + 'item', {
           type: 'POST',
           dataType: 'json',
           data: formData,
-          error: function() { alert("Failed to create new customer"); },
+          error: function() { alert("Failed to create new service item"); },
           success: function(res) {
             if (res.error) alert("Error: " + res.message);
             else {

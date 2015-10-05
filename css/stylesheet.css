@@ -175,3 +175,11 @@ input[type='checkbox'] {
 input[type="button"].button-primary.delete {
   padding: 0 18px;
 }
+
+.parts {
+  margin-top: 4rem;
+}
+
+.parts h4 {
+  text-align: left;
+}
