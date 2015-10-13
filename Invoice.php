@@ -81,7 +81,7 @@
                 $detail['quantity'] = round($detail['quantity'], 2);
                 $detail['total'] = round($detail['total'], 2);
                 $row  = "<tr>";
-                $row .= " <td>" . $detail['description'] . "<br /><span class=\"item-description\">" . $detail['comment'] . "</span></td>";
+                $row .= " <td>" . $detail['description'] . "<div class=\"item-description\">" . $detail['comment'] . "</div></td>";
                 $row .= " <td class=\"text-right\">$" . number_format($detail['cost'], 2) . "</td>";
                 $row .= " <td class=\"text-right\">" . number_format($detail['quantity'], 2) . "</td>";
                 $row .= " <td class=\"text-right\">$" . number_format($detail['total'], 2) . "</td>";
