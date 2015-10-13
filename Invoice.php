@@ -140,7 +140,7 @@
     <script>
       window.print();
       setTimeout(function() {
-        //window.close();
+        window.close();
       }, 500);
     </script>
   </body>
