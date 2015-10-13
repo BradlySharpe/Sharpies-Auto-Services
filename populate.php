@@ -47,4 +47,4 @@
     echo "\n\nDatabase Populated!\n\n";
   }
 
-  require('Tests.php');
+  //require('Tests.php');
