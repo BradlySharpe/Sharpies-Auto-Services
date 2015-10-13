@@ -395,10 +395,8 @@
       </tr>
     </table>
     <script>
-      /*
       window.print();
       setTimeout(function() { window.close(); }, 100);
-      */
     </script>
   </body>
 </html>
