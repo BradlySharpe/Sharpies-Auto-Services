@@ -103,6 +103,7 @@
               }
               */
             ?>
+            <!--
             <tr>
               <td colspan="3" class="total">
                 Subtotal:
@@ -119,12 +120,14 @@
                 $<?php echo number_format($subtotal * 0.1, 2); ?>
               </td>
             </tr>
+          -->
             <tr>
               <td colspan="3" class="total">
                 Total:
               </td>
               <td class="text-right">
-                $<?php echo number_format($subtotal * 1.1, 2); ?>
+                <!-- $<?php //echo number_format($subtotal * 1.1, 2); ?> -->
+                $<?php echo number_format($subtotal * 1, 2); ?>
               </td>
             </tr>
           </table>
