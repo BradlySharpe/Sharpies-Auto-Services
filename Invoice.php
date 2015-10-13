@@ -135,12 +135,10 @@
       </tr>
     </table>
     <script>
-      /*
       window.print();
       setTimeout(function() {
         window.close();
       }, 500);
-      */
     </script>
   </body>
 </html>
