@@ -22,6 +22,15 @@ body {
   font-family: sans-serif;
 }
 
+.logo {
+  width: 70%;
+  max-width: 70%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
 table {
   width: 100%;
 }
