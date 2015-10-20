@@ -43,7 +43,7 @@
         array(
           'make' => array('required' => true, 'regex' => '/^.{1,100}$/'),
           'model' => array('required' => true, 'regex' => '/^.{1,100}$/'),
-          'registration' => array('required' => true, 'regex' => '/^[A-Z0-9]{1,6}$/')
+          'registration' => array('required' => true, 'regex' => '/^[A-Z0-9]{1,10}$/')
         ),
         $_POST
       );
