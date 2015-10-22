@@ -4,6 +4,7 @@
     die("Couldn't find invoice ID");
 
   $invoiceId = $_GET['id'];
+  $close = (array_key_exists('close', $_GET)) ? (bool)$_GET['close'] : true;
 
   require_once ('API/DBase.php');
 
@@ -139,9 +140,9 @@
     </table>
     <script>
       window.print();
-      setTimeout(function() {
-        window.close();
-      }, 500);
+      <?php
+      if ($close) { echo 'setTimeout(function() { window.close(); }, 500);'; }
+      ?>
     </script>
   </body>
 </html>
