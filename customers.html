@@ -119,7 +119,7 @@
 
       var updateSearch = function() {
         try {
-          var regex = new RegExp($("#searchText").val(), 'i');
+          var regex = new RegExp("^" + $("#searchText").val(), 'i');
           $("#noResults").addClass('hidden');
           $('#customer').find('tbody tr td:nth-child(2)').each(function(){
             $this = $(this);
