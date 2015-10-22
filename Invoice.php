@@ -10,7 +10,7 @@
 
   $db = new DBase();
 
-  $sql = "SELECT CAST(inv.created AS Date) as 'invoiceDate', inv.id as 'invoiceId', cust.firstname, cust.lastname, cust.address, cust.city, cust.state, cust.postcode FROM invoice inv INNER JOIN service serv ON (serv.id = inv.service) INNER JOIN customer cust ON (cust.id = serv.owner) WHERE inv.id = " . $db->escape($invoiceId);
+  $sql = "SELECT CAST(inv.created AS Date) as 'invoiceDate', inv.id as 'invoiceId', cust.firstname, cust.lastname, cust.address, cust.city, cust.state, cust.postcode, c.make, c.model, c.registration FROM invoice inv INNER JOIN service serv ON (serv.id = inv.service) INNER JOIN customer cust ON (cust.id = serv.owner) INNER JOIN car c ON (serv.car = c.id) WHERE inv.id = " . $db->escape($invoiceId);
   $invoice = $db->fetchOne($sql);
 
   $invoice['invoiceDate'] = DateTime::createFromFormat('Y-m-d', $invoice['invoiceDate']);
@@ -58,11 +58,17 @@
         </td>
       </tr>
       <tr>
-        <td colspan="2">
+        <td>
           <strong>Billing Address:</strong><br />
           <?php echo $invoice['firstname'] . " " . $invoice['lastname']; ?><br />
           <?php echo $invoice['address']; ?>,<br />
           <?php echo $invoice['city']; ?>, <?php echo $invoice['state'] . " " . $invoice['postcode']; ?>
+        </td>
+        <td>
+          <strong>Vehicle Details:</strong><br />
+          Make: <?php echo $invoice['make']; ?><br />
+          Model: <?php echo $invoice['model']; ?><br />
+          Registration: <?php echo $invoice['registration']; ?>
         </td>
       </tr>
       <tr>
