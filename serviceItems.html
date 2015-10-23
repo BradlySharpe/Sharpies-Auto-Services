@@ -23,7 +23,7 @@
       </div>
       <div class="row">
         <div class="twelve columns header">
-          <h1 id="loadingMessage">Add New Service Item</h1>
+          <h1 id="loadingMessage">Loading Service Items</h1>
         </div>
       </div>
       <div class="row" id="noResults">
@@ -54,6 +54,19 @@
           </form>
         </div>
       </div>
+      <div class="row">
+        <div class="twelve columns">
+          <table id="serviceItems" class="hidden">
+            <thead>
+              <th>Description</th>
+              <th class="textright">Default Cost</th>
+              <th class="textright">Default Quantity</th>
+              <th class="textright">Comments</th>
+            </thead>
+            <tbody id="serviceItemsList"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/defaults.js"></script>
@@ -61,7 +74,7 @@
       $("#description").focus();
       $("#addNewServiceItem").submit(function() {
         var formData = $("#addNewServiceItem").serialize();
-        formData += "&comment=" + ($("#comment").checked ? "1" : "0");
+        formData += "&comment=" + ($("#comment").prop('checked') ? "1" : "0");
         formData += "&active=1";
         $.ajax(SAS.baseURL + 'item', {
           type: 'POST',
@@ -75,10 +88,42 @@
               $("#addNewServiceItem").trigger('reset');
               $("#description").focus();
             }
+            reloadServiceItems();
           }
         });
         return false;
       });
+
+      setLoadingMessage = function(message) { if (message) $("#loadingMessage").text(message); }
+
+      reloadServiceItems = function() {
+        $("#serviceItemsList").empty();
+        $.ajax(SAS.baseURL + 'item', {
+          type: 'GET',
+          error: function() { setLoadingMessage("Failed to get Service Items"); },
+          success: function(res) {
+            if (res.error) setLoadingMessage("Error: " + res.message);
+            else {
+              res.data = res.data.sort(sort_by('description', { name: 'defaultCost' }));
+              for (var i = 0; i < res.data.length; i++) {
+                item = res.data[i];
+                console.log("Creating row: ", item);
+                var row = "<tr>" +
+                  "<td>" + item.description + "</td>" +
+                  "<td class=\"textright\">$" + parseInt(item.defaultCost).formatMoney(2) + "</td>" +
+                  "<td class=\"textright\">" + parseInt(item.defaultQuantity).formatMoney(2) + "</td>" +
+                  "<td class=\"textright\">" + ((1 == item.comment) ? "Yes" : "No") + "</td>" +
+                "</tr>";
+                $('#serviceItems').find('tbody').append(row);
+              };
+              $("#serviceItems").removeClass('hidden');
+              setLoadingMessage("Add New Service Item");
+            }
+          }
+        });
+      }
+
+      reloadServiceItems();
     </script>
   </body>
 </html>
