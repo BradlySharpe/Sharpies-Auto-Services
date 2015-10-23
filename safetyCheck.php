@@ -8,7 +8,7 @@
   require_once ('API/DBase.php');
 
   $db = new DBase();
-  $sql = "select c.firstname, c.lastname, c.address, c.city, c.state, c.postcode, cast(sc.created as date) as created, ca.make, ca.registration from safetycheck sc INNER JOIN service s ON (sc.id = s.safetyCheck) INNER JOIN customer c ON (s.owner = c.id) INNER JOIN car ca ON (s.car = ca.id) where sc.id = " . $db->escape($safetyCheckId);
+  $sql = "select c.firstname, c.lastname, c.address, c.city, c.state, c.postcode, cast(sc.created as date) as created, ca.make, ca.registration, s.odo from safetycheck sc INNER JOIN service s ON (sc.id = s.safetyCheck) INNER JOIN customer c ON (s.owner = c.id) INNER JOIN car ca ON (s.car = ca.id) where sc.id = " . $db->escape($safetyCheckId);
 
   $check = $db->fetchOne($sql);
   $check['created'] = DateTime::createFromFormat('Y-m-d', $check['created']);
@@ -43,7 +43,8 @@
         <td class="safetyCheckDetails">
           <label>Date:</label> <?php echo $check['created']; ?><br />
           <label>Make:</label> <?php echo $check['make']; ?><br />
-          <label>Reg No:</label> <?php echo $check['registration']; ?>
+          <label>Reg No:</label> <?php echo $check['registration']; ?><br />
+          <label>ODO:</label> <?php echo number_format($check['odo']); ?>kms
         </td>
       </tr>
       <tr>
