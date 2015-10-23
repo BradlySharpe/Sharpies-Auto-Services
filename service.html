@@ -110,7 +110,7 @@
                 var row = "<tr>" +
                   "<td class=\"u-right\">" + created + "</td>" +
                   "<td class=\"u-right\">" + service.odo + "</td>" +
-                  "<td class=\"u-right\">" + service.safetyCheck + "</td>" +
+                  "<td class=\"u-right\"><a target=\"_blank\" title=\"View " + service.safetyCheck + "\" href=\"safetyCheck.php?id=" + service.safetyCheck + "\">View " + service.safetyCheck + "</a></td>" +
                   /*"<td class=\"u-right\">" + (null == service.invoice ? "<a href=\"invoice.html#service=" + service.id + "\" title=\"Create Invoice\">Create Invoice</a>" : service.invoice) + "</td>" +*/
                   "<td class=\"u-right\">" + link + "</td>" +
                 "</tr>";
