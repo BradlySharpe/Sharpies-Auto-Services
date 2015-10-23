@@ -102,6 +102,7 @@
           type: 'GET',
           error: function() { setLoadingMessage("Failed to get Service Items"); },
           success: function(res) {
+            $("#serviceItems").addClass('hidden');
             if (res.error) setLoadingMessage("Error: " + res.message);
             else {
               res.data = res.data.sort(sort_by('description', { name: 'defaultCost' }));
