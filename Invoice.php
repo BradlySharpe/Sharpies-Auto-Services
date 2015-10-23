@@ -10,7 +10,7 @@
 
   $db = new DBase();
 
-  $sql = "SELECT CAST(inv.created AS Date) as 'invoiceDate', inv.id as 'invoiceId', cust.firstname, cust.lastname, cust.address, cust.city, cust.state, cust.postcode, c.make, c.model, c.registration FROM invoice inv INNER JOIN service serv ON (serv.id = inv.service) INNER JOIN customer cust ON (cust.id = serv.owner) INNER JOIN car c ON (serv.car = c.id) WHERE inv.id = " . $db->escape($invoiceId);
+  $sql = "SELECT CAST(inv.created AS Date) as 'invoiceDate', inv.id as 'invoiceId', inv.bankDetails, cust.firstname, cust.lastname, cust.address, cust.city, cust.state, cust.postcode, c.make, c.model, c.registration FROM invoice inv INNER JOIN service serv ON (serv.id = inv.service) INNER JOIN customer cust ON (cust.id = serv.owner) INNER JOIN car c ON (serv.car = c.id) WHERE inv.id = " . $db->escape($invoiceId);
   $invoice = $db->fetchOne($sql);
 
   $invoice['invoiceDate'] = DateTime::createFromFormat('Y-m-d', $invoice['invoiceDate']);
@@ -141,6 +141,17 @@
           <div class="terms">
             Payment Terms: Cash On Delivery
           </div>
+          <?php
+            if ($invoice['bankDetails']) {
+          ?>
+          <div class="bankDetails">
+            <strong>Account Name:</strong> Warren Sharpe&nbsp;&nbsp;&nbsp;
+            <strong>BSB:</strong> 083-957&nbsp;&nbsp;&nbsp;
+            <strong>Account Number:</strong> 79-810-5281
+          </div>
+          <?php
+            }
+          ?>
         </td>
       </tr>
     </table>

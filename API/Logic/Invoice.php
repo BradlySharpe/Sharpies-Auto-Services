@@ -20,7 +20,8 @@
     public function post() {
       $result = RequiredFields::getFields(
         array(
-          'service' => array('required' => true, 'regex' => '/^\d+$/')
+          'service' => array('required' => true, 'regex' => '/^\d+$/'),
+          'bankDetails' => array('regex' => '/^(0|1)$/')
         ),
         $_POST
       );
