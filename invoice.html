@@ -41,16 +41,46 @@
       </div>
       <div class="parts">
         <h4>Service Items:</h4>
+        <input id="searchText" type="text" placeholder="Search">
       </div>
       <div class="row">
         <div class="twelve columns">
           <table id="items" class="hidden">
             <thead>
-              <th><!-- Select --></th>
+              <th width="100px"><!-- Select --></th>
               <th>Description</th>
             </thead>
             <tbody id="itemsList"></tbody>
           </table>
+        </div>
+      </div>
+      <div class="row">
+        <h4>Add New Service Item:</h4>
+        <div class="twelve columns">
+          <form id="addNewServiceItem">
+            <div class="row">
+              <div class="twelve columns">
+                <label for="description">Description:</label><input type="text" name="description" id="description" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="four columns">
+                <label for="defaultCost"> Default Cost:</label><input type="text" name="defaultCost" id="defaultCost" />
+              </div>
+              <div class="four columns">
+                <label for="defaultQuantity">Default Quantity:</label><input type="text" name="defaultQuantity" id="defaultQuantity" />
+              </div>
+              <div class="four columns">
+                <label for="comment">Can Have Comments:</label><br />
+                <input type="checkbox" id="comment" checked="checked" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="twelve columns">
+                <input type="submit" class="button button-primary" value="Add New" />
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -80,17 +110,18 @@
         showPrint();
       }
 
-      loadItems = function() {
+      loadItems = function(callback) {
+        $('#itemsList').empty();
         $.ajax(SAS.baseURL + 'item', {
           type: 'GET',
           error: function() { setLoadingMessage("Failed to get Items"); },
           success: function(res) {
+            $("#items").addClass('hidden');
             if (res.error) setLoadingMessage("Error: " + res.message);
             else {
               res.data = res.data.sort(sort_by('description'));
               for (var i = 0; i < res.data.length; i++) {
                 item = res.data[i];
-                console.log('Adding', item);
                 var row = "<tr>" +
                   "<td class=\"textcenter\"><a class=\"button button-primary serviceItem\" data-id=\"" + item.id +
                     "\" data-defaultCost=\"" + item.defaultCost +
@@ -102,8 +133,9 @@
                 "</tr>";
                 $('#items').find('tbody').append(row);
               };
-              $("#items").toggleClass('hidden');
+              $("#items").removeClass('hidden');
               setLoadingMessage("Create Invoice");
+              if ("function" == typeof callback) callback();
             }
           }
         });
@@ -165,7 +197,6 @@
             comment: comment
           });
         }
-        console.log(detailLines);
 
         $.ajax(SAS.baseURL + 'invoice', {
           type: 'POST',
@@ -184,7 +215,6 @@
       postDetailLine = function() {
         if (detailLines.length) {
           var line = detailLines.shift();
-          console.log(line);
           $.ajax(SAS.baseURL + 'detail', {
             type: 'POST',
             data: {
@@ -209,11 +239,46 @@
         window.location.pathname = SAS.baseURL;
       }
 
-      $("#addNewVehicle").submit(function() {
-        var formData = $("#addNewVehicle").serialize();
-        formData += "&owner=" + customerId;
-        console.log(SAS.baseURL + 'customer/' + customerId + "/cars", formData);
+      var updateSearch = function() {
+        try {
+          var regex = new RegExp("^" + $("#searchText").val(), 'i');
+          $('#items').find('tbody tr td:nth-child(2)').each(function(){
+            $this = $(this);
+            $this.parent().removeClass('hidden');
+            if (!regex.test($this.text()))
+              $this.parent().addClass('hidden');
+          });
+        } catch (ex) { console.error(ex) }
+      };
 
+      $("#searchText").keyup(function() {
+        updateSearch();
+      });
+
+      $("#searchText").focus();
+
+      $("#addNewServiceItem").submit(function() {
+        var formData = $("#addNewServiceItem").serialize();
+        formData += "&comment=" + ($("#comment").prop('checked') ? "1" : "0");
+        formData += "&active=1";
+        var description = $("#description").val();
+        $.ajax(SAS.baseURL + 'item', {
+          type: 'POST',
+          dataType: 'json',
+          data: formData,
+          error: function() { alert("Failed to create new service item"); },
+          success: function(res) {
+            if (res.error) alert("Error: " + res.message);
+            else {
+              $("#addNewServiceItem").trigger('reset');
+              loadItems(function() {
+                $("#searchText").val(description);
+                updateSearch();
+              });
+            }
+          }
+        });
+        return false;
       });
     </script>
   </body>
